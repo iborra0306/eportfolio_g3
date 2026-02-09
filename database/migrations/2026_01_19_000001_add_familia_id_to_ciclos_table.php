@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('ciclos_formativos', function (Blueprint $table) {
-            $table->unsignedBigInteger('familia_profesional_id')->nullable()->after('id');
-            $table->foreign('familia_profesional_id')->references('id')->on('familias_profesionales')->onDelete('cascade');
+            //$table->unsignedBigInteger('familia_profesional_id')->nullable()->after('id');
+            //$table->foreign('familia_profesional_id')->references('id')->on('familias_profesionales')->onDelete('cascade');
         });
     }
 
