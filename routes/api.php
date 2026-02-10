@@ -17,6 +17,7 @@ use App\Http\Controllers\API\FamiliaProfesionalController;
 use App\Http\Controllers\API\MatriculasController;
 use App\Http\Controllers\API\ModuloFormativoController;
 use App\Http\Controllers\API\ResultadoAprendizajeController;
+use App\Http\Controllers\API\TokenController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -94,6 +95,10 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('resultados-aprendizaje.criterios-evaluacion', CriterioEvaluacionController::class)->parameters([
         'resultados-aprendizaje' => 'resultadoAprendizaje'
     ]);
+     // emite un nuevo token
+    Route::post('tokens', [TokenController::class, 'store']);
+    // elimina el token del usuario autenticado
+    Route::delete('tokens', [TokenController::class, 'destroy'])->middleware('auth:sanctum');
 });
 
 Route::any('/{any}', function (ServerRequestInterface $request) {
