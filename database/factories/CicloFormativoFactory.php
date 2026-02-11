@@ -21,7 +21,7 @@ class CicloFormativoFactory extends Factory
             'codigo' => fake()->text(50),
             'grado' => fake()->randomElement(['básico', 'medio', 'superior']),
             'descripcion' => fake()->text(200),
-            'familia_profesional_id' => fake()->randomElement([1, 2, 3, 4, 5])
-            ];
+            'familia_profesional_id' => fake()->unique()//->randomElement([1, 2, 3, 4, 5])
+        ];
     }
 }

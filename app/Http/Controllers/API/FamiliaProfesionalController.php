@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CicloFormativoResource;
 use App\Http\Resources\FamiliaProfesionalResource;
+use App\Models\CicloFormativo;
 use App\Models\FamiliaProfesional;
 use Illuminate\Http\Request;
 
@@ -12,11 +14,17 @@ class FamiliaProfesionalController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, FamiliaProfesional $familiaProfesional)
     {
-         return FamiliaProfesionalResource::collection(
-            FamiliaProfesional::orderBy($request->sort ?? 'id', $request->order ?? 'asc')
-            ->paginate($request->per_page));
+         $query = FamiliaProfesional::query();
+
+        if ($request->search) {
+            $query->where('nombre', 'like', '%' . $request->search . '%');
+        }
+
+        return FamiliaProfesionalResource::collection(
+            $query->orderBy($request->sort ?? 'id', $request->order ?? 'asc')->paginate($request->per_page)
+        );
     }
 
     /**
@@ -24,10 +32,14 @@ class FamiliaProfesionalController extends Controller
      */
     public function store(Request $request)
     {
-        $familiaProfesional = json_decode($request->getContent(), true);
+
+        $familiaProfesional = $request->validate([
+            'nombre' => 'required',
+            'codigo' => 'required|unique:familias_profesionales,codigo',
+            'descripcion' => 'required'
+        ]);
 
         $familiaProfesional = FamiliaProfesional::create($familiaProfesional);
-
         return new FamiliaProfesionalResource($familiaProfesional);
     }
 
@@ -55,13 +67,26 @@ class FamiliaProfesionalController extends Controller
      */
     public function destroy(FamiliaProfesional $familiaProfesional)
     {
+
         try {
+            $familiaProfesional->delete();
+            return response()->json([
+                'message' => 'FamiliaProfesional eliminado correctamente'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error: ' . $e->getMessage()
+            ], 400);
+        }
+
+
+        /*try {
             $familiaProfesional->delete();
             return response()->json(null, 204);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error: ' . $e->getMessage()
             ], 400);
-        }
+        }*/
     }
 }
