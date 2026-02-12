@@ -16,7 +16,7 @@ class FamiliaProfesionalController extends Controller
      */
     public function index(Request $request, FamiliaProfesional $familiaProfesional)
     {
-         $query = FamiliaProfesional::query();
+        $query = FamiliaProfesional::query();
 
         if ($request->search) {
             $query->where('nombre', 'like', '%' . $request->search . '%');

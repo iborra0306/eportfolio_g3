@@ -3,7 +3,7 @@
 return [
 
     // Referencia al administrador del .env
-    'admin' => env('ADMIN_EMAIL'),
+    'admin' => ['email' => env('ADMIN_EMAIL')],
 
     /*
     |--------------------------------------------------------------------------

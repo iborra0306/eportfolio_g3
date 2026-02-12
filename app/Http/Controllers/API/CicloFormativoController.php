@@ -13,21 +13,36 @@ class CicloFormativoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, FamiliaProfesional $familiaProfesional)
+    public function index(Request $request, FamiliaProfesional $familiaProfesional, CicloFormativo $cicloFormativo)
     {
+        $query = CicloFormativo::query();
+
+        if ($request->search) {
+            $query->where('nombre', 'like', '%' . $request->search . '%');
+        }
+
         return CicloFormativoResource::collection(
-            CicloFormativo::where('familia_profesional_id', $familiaProfesional->id)
-            ->orderBy($request->sort ?? 'id', $request->order ?? 'asc')
-            ->paginate($request->per_page));
+            $query->orderBy($request->sort ?? 'id', $request->order ?? 'asc')->paginate($request->per_page)
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, FamiliaProfesional $familiaProfesional)
+    public function store(Request $request, CicloFormativo $cicloFormativo)
     {
-        $cicloFormativoDato = json_decode($request->getContent(), true);
-        $cicloFormativoDato['familia_profesional_id'] = $familiaProfesional->id;
+        abort_if ($request->user()->cannot('store', $cicloFormativo), 403);
+
+
+        $cicloFormativoDato = $request->validate([
+            'nombre' => 'required',
+            'codigo' => 'required|unique:ciclos_formativos,codigo',
+            'grado' => 'required|in:basico,medio,superior',
+            //'descripcion' => 'required',
+            'familia_profesional_id' => 'required|exists:familias_profesionales,id'
+        ]);
+
+        //dd($cicloFormativoDato);
 
         $cicloFormativo = CicloFormativo::create($cicloFormativoDato);
 
@@ -39,7 +54,6 @@ class CicloFormativoController extends Controller
      */
     public function show(FamiliaProfesional $familiaProfesional, CicloFormativo $cicloFormativo)
     {
-        abort_if($cicloFormativo->familia_profesional_id !== $familiaProfesional->id, 404);
         return new CicloFormativoResource($cicloFormativo);
     }
 
@@ -48,7 +62,7 @@ class CicloFormativoController extends Controller
      */
     public function update(Request $request, FamiliaProfesional $familiaProfesional, CicloFormativo $cicloFormativo)
     {
-        abort_if($cicloFormativo->familia_profesional_id !== $familiaProfesional->id, 404);
+        abort_if ($request->user()->cannot('update', $cicloFormativo), 403);
         $cicloFormativoDato = json_decode($request->getContent(), true);
         $cicloFormativo->update($cicloFormativoDato);
 
@@ -58,9 +72,10 @@ class CicloFormativoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FamiliaProfesional $familiaProfesional, CicloFormativo $cicloFormativo)
+    public function destroy(Request $request, FamiliaProfesional $familiaProfesional, CicloFormativo $cicloFormativo)
     {
-        abort_if($cicloFormativo->familia_profesional_id !== $familiaProfesional->id, 404);
+        abort_if ($request->user()->cannot('delete', $cicloFormativo), 403);
+
         try {
             $cicloFormativo->delete();
             return response()->json(null, 204);
