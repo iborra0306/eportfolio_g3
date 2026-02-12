@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\FamiliaProfesional;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Tests\Feature\Api\FamiliaProfesionalApiTest;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CicloFormativo>
@@ -17,11 +19,11 @@ class CicloFormativoFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre' => fake()->name(250),
-            'codigo' => fake()->text(50),
+            'nombre' => fake()->word(),
+            'codigo' => fake()->unique()->text(50),
             'grado' => fake()->randomElement(['básico', 'medio', 'superior']),
             'descripcion' => fake()->text(200),
-            'familia_profesional_id' => fake()->unique()//->randomElement([1, 2, 3, 4, 5])
+            'familia_profesional_id' => FamiliaProfesional::factory(),
         ];
     }
 }
