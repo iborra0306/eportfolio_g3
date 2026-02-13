@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('familia_profesional_id')->constrained('familias_profesionales')->onDelete('cascade')->nullable();
             $table->string('nombre', 255);
             $table->string('codigo', 50);
-            $table->enum('grado', ['básico', 'medio', 'superior']);
+            $table->enum('grado', ['basico', 'medio', 'superior']);
             $table->string('descripcion')->nullable();
             $table->timestamps();
         });
