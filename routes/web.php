@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResultadosAprendizajesController;
 use App\Http\Controllers\EvidenciasController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PortfolioImportController;
 
 Route::get('/', function () {
     return view('home');
@@ -102,4 +103,19 @@ Route::prefix('evidencias')->group(function () {
 });
 
 
+// ----------------------------------------
+// Rutas practica hibridas
+Route::middleware(['auth'])->group(function () {
+    // Formulario de importación
+    Route::get('/portfolio/import', [PortfolioImportController::class, 'showImportForm'])
+        ->name('portfolio.import.index');
+
+    // Importar desde JSON Resume
+    Route::post('/portfolio/import/json-resume', [PortfolioImportController::class, 'importJsonResume'])
+        ->name('portfolio.import.json-resume');
+
+    // Importar desde GitHub
+    Route::post('/portfolio/import/github', [PortfolioImportController::class, 'importGitHub'])
+        ->name('portfolio.import.github');
+});
 require __DIR__.'/auth.php';
