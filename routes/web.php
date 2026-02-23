@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\API\MatriculasController;
 use App\Http\Controllers\CiclosFormativosController;
 use App\Http\Controllers\CriteriosEvaluacionController;
 use App\Http\Controllers\FamiliasProfesionalesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResultadosAprendizajesController;
 use App\Http\Controllers\EvidenciasController;
+use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PortfolioImportController;
 
@@ -118,6 +120,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/portfolio/import/github', [PortfolioImportController::class, 'importGitHub'])
         ->name('portfolio.import.github');
 });
+
+Route::get('mail/prueba', [MailController::class, 'prueba']);
+
 require __DIR__.'/auth.php';
 require __DIR__.'/analisis.php';
 require __DIR__.'/exportaciones.php';
